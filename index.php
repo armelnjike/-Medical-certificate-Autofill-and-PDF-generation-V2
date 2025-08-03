@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+$inactivityLimit = 30*60*1000;
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    // Pas connecté => rediriger vers la page de login
+    header('Location: administration/login.php');
+    exit();
+}
+
+// Vérifie la durée d'inactivité
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactivityLimit) {
+    // Session expirée
+    session_unset();
+    session_destroy();
+    header('Location: administration/login.php');
+    exit();
+}
+// Mise à jour de l'heure de dernière activité
+$_SESSION['last_activity'] = time();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -962,6 +985,29 @@
     document.addEventListener('DOMContentLoaded', function() {
         initializeSignature();
     });
+
+    (function () {
+        let timeout;
+
+        function resetTimer() {
+            clearTimeout(timeout);
+            // Redémarre le compte à rebours de 2 min
+            timeout = setTimeout(logout, 10 * 60 * 1000); // 120000 ms = 2 minutes
+        }
+
+        function logout() {
+            window.location.href = "administration/login.php";
+        }
+
+        // Écoute tous les types d'activité
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetTimer);
+        });
+
+        // Initialiser au chargement
+        resetTimer();
+    })();
+
 </script>
 </body>
 </html>

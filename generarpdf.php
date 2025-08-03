@@ -4,6 +4,27 @@ header("Access-Control-Allow-Origin: *"); // pour test, sinon mets ton vrai doma
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, X-Requested-With");
 
+session_start();
+
+$inactivityLimit = 30*60*1000;
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    // Pas connecté => rediriger vers la page de login
+    header('Location: administration/login.php');
+    exit();
+}
+
+// Vérifie la durée d'inactivité
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactivityLimit) {
+    // Session expirée
+    session_unset();
+    session_destroy();
+    header('Location: administration/login.php');
+    exit();
+}
+// Mise à jour de l'heure de dernière activité
+$_SESSION['last_activity'] = time();
 // Gérer OPTIONS (pré-vol)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

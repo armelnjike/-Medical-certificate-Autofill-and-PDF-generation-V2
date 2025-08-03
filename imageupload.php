@@ -1,6 +1,28 @@
 <?php
 header('Content-Type: application/json');
 
+session_start();
+
+$inactivityLimit = 30*60*1000;
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    // Pas connecté => rediriger vers la page de login
+    header('Location: administration/login.php');
+    exit();
+}
+
+// Vérifie la durée d'inactivité
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactivityLimit) {
+    // Session expirée
+    session_unset();
+    session_destroy();
+    header('Location: administration/login.php');
+    exit();
+}
+// Mise à jour de l'heure de dernière activité
+$_SESSION['last_activity'] = time();
+
 $response = [];
 
 $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/foyet-medical/uploads/';
@@ -13,7 +35,7 @@ if (isset($_FILES['photo_identite']) && isset($_FILES['certificat_medical'])) {
 
     // Map fixed filenames to the form input fields
     $fileMappings = [
-        'photo_identite' => 'foyetsignature',
+        'photo_identite' => 'foyetlogo',
         'certificat_medical' => 'foyetcachet',
     ];
 
