@@ -11,7 +11,7 @@
     <div class="login-wrapper">
         <div class="login-header">
             <div class="logo">
-                <div class="logo-icon">🔐</div>
+                <div class="logo-icon"><img src="../logo-foyetnobg.png" alt="" style="width: 50px; height:auto;"></div>
                 <h1>Foyet-Medical</h1>
             </div>
             <p class="subtitle">Accédez à votre espace personnel</p>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content {
+            line-height: 1.6;
+        }
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    {{logo}}
+    <h1>Medical Certificate</h1>
+</div>
+
+<div class="content">
+    <h2>Patient Information</h2>
+    <p><strong>Name:</strong> {{patientName}}</p>
+    <p><strong>Birth Date:</strong> {{birthdate}}</p>
+    <p><strong>Phone:</strong> {{phone}}</p>
+    <p><strong>Sex:</strong> {{sex}}</p>
+
+    <h2>Medical Information</h2>
+    <p><strong>Care Practitioner:</strong> {{carePractitionerName}}</p>
+    <p><strong>PPD Planted On:</strong> {{ppdPlantedOn}}</p>
+    <p><strong>PPD Read On:</strong> {{ppdReadOn}}</p>
+    <p><strong>PPD Result:</strong> {{ppdResult}}</p>
+    <p><strong>X-Ray Date:</strong> {{xRayDate}}</p>
+
+    <h2>Facility Information</h2>
+    <p><strong>Facility:</strong> {{facilityName}}</p>
+    <p><strong>Phone:</strong> {{facilityPhone}}</p>
+    <p><strong>Address:</strong> {{facilityAddress}}</p>
+
+    <div class="signature">
+        <p><strong>Provider:</strong> {{providerName}}</p>
+        <p><strong>Date:</strong> {{signedDate}}</p>
+        {{tmpFile}}
+        {{cachet}}
+    </div>
+</div>
+</body>
+</html>

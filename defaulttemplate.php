@@ -27,6 +27,28 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 $_SESSION['last_activity'] = time();
 
 
+/**
+ * Formatte une date venant du $_POST
+ *
+ * @param string $key    La clé dans $_POST
+ * @param string $format Le format de sortie
+ * @return string        Chaîne formatée ou '' si invalide
+ */
+function formatPostedDate($key, $format = 'm-d-Y') {
+    if (!empty($_POST[$key])) {
+        try {
+            $date = new DateTime($_POST[$key]);
+            return $date->format($format);
+        } catch (Exception $e) {
+            // Retourne chaîne vide si la date est invalide
+            return '';
+        }
+    }
+    return '';
+}
+
+
+
 // Gérer OPTIONS (pré-vol)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -65,17 +87,19 @@ $signedDate = '2025-12-02';
 //patient info
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $patientName = $_POST["patientName"];
-    $birthdate = $_POST["birthDate"];
+    $birthdate = formatPostedDate("birthDate");
     $phone = $_POST["phoneNumber"];
     $sex = $_POST["sex"];
     $street = $_POST["street"];
 
 // Medical Tests & Examinations
     $carePractitionerName = $_POST["careP"];
-    $ppdPlantedOn = $_POST["ppdPlantedOn"];
-    $ppdReadOn = $_POST["ppdReadOn"];
-    $ppdResult = $_POST["ppdResult"];
-    $xRayDate = $_POST["chestXrayOn"];
+
+    $ppdPlantedOn = formatPostedDate("ppdPlantedOn");
+    $ppdReadOn    = formatPostedDate("ppdReadOn");
+    $ppdResult    = formatPostedDate("ppdResult");
+    $xRayDate     = formatPostedDate("chestXrayOn");
+
 
 //health care facility information
     $facilityName = $_POST["facilityName"];
@@ -85,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //Healthcare Provider Information
 
     $providerName = $_POST["providerName"];
-    $signedDate = (new DateTime())->format('Y-m-d');
+    $signedDate = (new DateTime())->format('m-d-Y');
 
 // Print the image to the pdf
 
@@ -165,9 +189,12 @@ $dompdf->stream('fiche_utilisateur.pdf', ['Attachment' => false]); // false = af
 
 // Send PDF as a blob to the navigator
 //header('Content-Type: application/pdf');
-header('Content-Disposition: inline; filename="certificate.pdf"');
+
 
 $dompdf->stream('certificate.pdf', ['Attachment' => false]);
+header('Content-Type: application/pdf');
+header('Content-Disposition: inline; filename="document.pdf"');
+header('Content-Length: ' . strlen($pdfOutput));
 exit;
 
 

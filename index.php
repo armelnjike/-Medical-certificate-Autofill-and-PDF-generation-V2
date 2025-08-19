@@ -20,6 +20,9 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 }
 // Mise à jour de l'heure de dernière activité
 $_SESSION['last_activity'] = time();
+
+// Détermine la page actuelle
+$current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,8 +41,157 @@ $_SESSION['last_activity'] = time();
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            text-decoration: none;
+        }
+
+        .navbar-brand svg {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+            fill: #4facfe;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            color: #2d3748;
+            font-weight: 500;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .nav-link svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-link.logout {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .nav-link.logout:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #e53e3e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #2d3748;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-toggle:hover {
+            color: #4facfe;
+        }
+
+        /* Mobile Navbar */
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            .navbar-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                display: none;
+            }
+
+            .navbar-nav.active {
+                display: flex;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .navbar-container {
+                position: relative;
+            }
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
         }
 
         .container {
@@ -258,109 +410,6 @@ $_SESSION['last_activity'] = time();
             gap: 20px;
         }
 
-        .signature-area {
-            background: #f7fafc;
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            min-height: 120px;
-        }
-
-        .signature-area:hover {
-            border-color: #4facfe;
-            background: #edf2f7;
-        }
-
-        .signature-container {
-            position: relative;
-            background: #f7fafc;
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 200px;
-            transition: all 0.3s ease;
-        }
-
-        .signature-container:hover {
-            border-color: #4facfe;
-            background: #edf2f7;
-        }
-
-        .signature-canvas {
-            width: 100%;
-            height: 150px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            cursor: crosshair;
-            display: none;
-        }
-
-        .signature-canvas.active {
-            display: block;
-        }
-
-        .signature-controls {
-            display: none;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .signature-controls.active {
-            display: flex;
-        }
-
-        .signature-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .clear-btn {
-            background: #fed7d7;
-            color: #c53030;
-        }
-
-        .clear-btn:hover {
-            background: #feb2b2;
-        }
-
-        .save-btn {
-            background: #c6f6d5;
-            color: #2f855a;
-        }
-
-        .save-btn:hover {
-            background: #9ae6b4;
-        }
-
-        .signature-placeholder {
-            font-style: italic;
-            color: #718096;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         .submit-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 40px;
@@ -390,6 +439,7 @@ $_SESSION['last_activity'] = time();
         .submit-btn:active {
             transform: translateY(0);
         }
+
         .changeTemplate-btn {
             background: linear-gradient(135deg, #000a0e 0%, #0f00fa0f 100%);
             color: white;
@@ -413,7 +463,6 @@ $_SESSION['last_activity'] = time();
         .changeTemplate-btn:active {
             transform: translateY(1);
         }
-
 
         @media (max-width: 768px) {
             .container {
@@ -487,148 +536,204 @@ $_SESSION['last_activity'] = time();
     </style>
 </head>
 <body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="index.php" class="navbar-brand">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 8h-2v3h-3v2h3v3h2v-3h3v-2h-3zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
+            </svg>
+            MedCare System
+        </a>
+
+        <button class="nav-toggle" onclick="toggleNavbar()">
+            ☰
+        </button>
+
+        <ul class="navbar-nav" id="navbarNav">
+            <li class="nav-item">
+                <a href="page1.php" class="nav-link <?php echo ($current_page == 'page1') ? 'active' : ''; ?>">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Registration Form 1
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="page2.php" class="nav-link <?php echo ($current_page == 'page2') ? 'active' : ''; ?>">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Registration Form 2
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="page3.php" class="nav-link <?php echo ($current_page == 'page3') ? 'active' : ''; ?>">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C0,3.89 20.1,3 19,3Z"/>
+                    </svg>
+                    Registration Form 3
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="editeurd.php" class="nav-link">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    Template Editor
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="administration/logout.php" class="nav-link logout" onclick="return confirm('Are you sure you want to logout?')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"/>
+                    </svg>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 <div class="floating-elements">
     <div class="floating-circle"></div>
     <div class="floating-circle"></div>
     <div class="floating-circle"></div>
 </div>
 
-<div class="container">
-    <div class="header navbar">
-        <div class="header-content">
-            <a href="editeurd.php"><button class="changeTemplate-btn">Modify the Template</button> </a>
-        </div>
-    </div>
-    <div class="header">
-        <div class="header-content">
-            <div class="medical-icon">
-                <svg viewBox="0 0 24 24">
-                    <path d="M19 8h-2v3h-3v2h3v3h2v-3h3v-2h-3zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
-                </svg>
-            </div>
-            <h1>Patient Registration</h1>
-            <p>Preemployement medical examination by q licenced health care practitioner</p>
-        </div>
-    </div>
+<div class="main-content">
+    <div class="container">
 
-    <form id="patientForm" action="#" method="POST">
-        <!-- Patient Information Section -->
-        <div class="form-section">
-            <div class="section-header">
-                <svg class="section-icon" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-                Patient Information
-            </div>
-            <div class="section-content">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="patientName" class="required">Full Name</label>
-                        <input type="text" id="patientName" name="patientName" required placeholder="Enter patient's full name">
-                    </div>
-                    <div class="form-group">
-                        <label for="birthDate" class="required">Date of Birth</label>
-                        <input type="date" id="birthDate" name="birthDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phoneNumber" class="required">Phone Number</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="+1 (555) 123-4567">
-                    </div>
-                    <div class="form-group">
-                        <label for="sex" class="required">Sex</label>
-                        <select id="sex" name="sex" required>
-                            <option value="">Select sex</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="street" class="required">Street Address</label>
-                        <input type="text" id="street" name="street" required placeholder="Enter complete street address">
-                    </div>
+        <div class="header">
+            <div class="header-content">
+                <div class="medical-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 8h-2v3h-3v2h3v3h2v-3h3v-2h-3zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
+                    </svg>
                 </div>
+                <h1>Patient Registration</h1>
+                <p>Preemployement medical examination by a licenced health care practitioner</p>
             </div>
-        </div>
-        <!--  ----------------------------------------------------------  -->
-        <!-- Medical Tests Section -->
-        <div class="form-section">
-            <div class="section-header">
-                <svg class="section-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                </svg>
-                Practical care examinator
-            </div>
-            <div class="section-content">
-                <div class="medical-tests">
-                    <h3>
-                        <svg class="test-icon" viewBox="0 0 24 24">
-                            <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
-                        </svg>
-                        Care Name
-                    </h3>
-                    <div class="ppd-grid">
-                        <div class="form-group">
-                            <label for="ppdResult">Result (mm)</label>
-                            <input type="text" id="ppdResult" name="careP" placeholder="name of the care examinator">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <!-- ------------------------------------------------------------------   -->
-
-
-
-
-        <!-- Medical Tests Section -->
-        <div class="form-section">
-            <div class="section-header">
-                <svg class="section-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                </svg>
-                Medical Tests & Examinations
-            </div>
-            <div class="section-content">
-                <div class="medical-tests">
-                    <h3>
-                        <svg class="test-icon" viewBox="0 0 24 24">
-                            <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
-                        </svg>
-                        PPD Tuberculin Skin Test
-                    </h3>
-                    <div class="ppd-grid">
-                        <div class="form-group">
-                            <label for="ppdPlantedOn">Planted On</label>
-                            <input type="date" id="ppdPlantedOn" name="ppdPlantedOn">
-                        </div>
-                        <div class="form-group">
-                            <label for="ppdReadOn">Read On</label>
-                            <input type="date" id="ppdReadOn" name="ppdReadOn">
-                        </div>
-                        <div class="form-group">
-                            <label for="ppdResult">Result (mm)</label>
-                            <input type="text" id="ppdResult" name="ppdResult" placeholder="Enter measurement in mm">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="chestXrayOn">Chest X-ray Date</label>
-                        <input type="date" id="chestXrayOn" name="chestXrayOn">
-                    </div>
+            <div >
+                <div class="header-content">
+                    <a href="editeurd.php"><button class="changeTemplate-btn">Modify the Template</button> </a>
                 </div>
             </div>
         </div>
 
-        <!-- Facility Information Section -->
-        <div class="form-section">
-            <div class="section-header">
-                <svg class="section-icon" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
+        <form id="patientForm" action="#" method="POST">
+            <!-- Patient Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Patient Information
+                </div>
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patientName" class="required">Full Name</label>
+                            <input type="text" id="patientName" name="patientName" required placeholder="Enter patient's full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate" class="required">Date of Birth</label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber" class="required">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="sex" class="required">Sex</label>
+                            <select id="sex" name="sex" required>
+                                <option value="">Select sex</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="street" class="required">Street Address</label>
+                            <input type="text" id="street" name="street" required placeholder="Enter complete street address">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practical care examinator Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Practical care examinator
+                </div>
+                <div class="section-content">
+                    <div class="medical-tests">
+                        <h3>
+                            <svg class="test-icon" viewBox="0 0 24 24">
+                                <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                            </svg>
+                            Care Name
+                        </h3>
+                        <div class="ppd-grid">
+                            <div class="form-group">
+                                <label for="ppdResult">Result (mm)</label>
+                                <input type="text" id="ppdResult" name="careP" placeholder="name of the care examinator">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Tests Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Medical Tests & Examinations
+                </div>
+                <div class="section-content">
+                    <div class="medical-tests">
+                        <h3>
+                            <svg class="test-icon" viewBox="0 0 24 24">
+                                <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                            </svg>
+                            PPD Tuberculin Skin Test
+                        </h3>
+                        <div class="ppd-grid">
+                            <div class="form-group">
+                                <label for="ppdPlantedOn">Planted On</label>
+                                <input type="date" id="ppdPlantedOn" name="ppdPlantedOn">
+                            </div>
+                            <div class="form-group">
+                                <label for="ppdReadOn">Read On</label>
+                                <input type="date" id="ppdReadOn" name="ppdReadOn">
+                            </div>
+                            <div class="form-group">
+                                <label for="ppdResult2">Result (mm)</label>
+                                <input type="text" id="ppdResult2" name="ppdResult" placeholder="Enter measurement in mm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="chestXrayOn">Chest X-ray Date</label>
+                            <input type="date" id="chestXrayOn" name="chestXrayOn">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facility Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
                 Healthcare Facility Information
             </div>
             <div class="section-content">
@@ -675,7 +780,7 @@ $_SESSION['last_activity'] = time();
 
             </p>
 
-            <!--    Change the template button  -->
+            <!--  Change the template button  -->
 
             <button type="button" class="changeTemplate-btn" id="cht">Print on Most  Recent Template</button>
             <p style="color: rgba(255,255,255,0.8); margin-top: 15px; font-size: 0.9rem;">
@@ -732,15 +837,17 @@ $_SESSION['last_activity'] = time();
                     return response.blob(); // or response.json() if expecting JSON
                 })
                 .then(blob => {
+                    
                     const blobUrl = URL.createObjectURL(blob);
 
                     // Open in a new tab
+                    
                     const pdfWindow = window.open(blobUrl);
 
                     // Optional: Trigger print automatically after PDF loads
-                    pdfWindow.onload = () => {
-                        pdfWindow.print();
-                    };
+                    if (pdfWindow) {
+                        pdfWindow.onload = () => pdfWindow.print();
+                     }
 
                 })
                 .catch(error => {
