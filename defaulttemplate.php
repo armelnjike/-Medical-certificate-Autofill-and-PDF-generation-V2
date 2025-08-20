@@ -1,4 +1,9 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once 'server/database.php';
+use Dompdf\Dompdf;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 // À mettre tout en haut de  defaulttemplate.php
 header("Access-Control-Allow-Origin: *"); // pour test, sinon mets ton vrai domaine
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
@@ -46,7 +51,15 @@ function formatPostedDate($key, $format = 'm-d-Y') {
     }
     return '';
 }
+function generateRandomKey($length = 8) {
+    $code = '';
+    for ($i = 0; $i < $length; $i++) {
+        $code .= random_int(0, 9);
+    }
 
+    return $code;
+
+}
 
 
 // Gérer OPTIONS (pré-vol)
@@ -54,35 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
-require_once __DIR__ . '/vendor/autoload.php';
-use Dompdf\Dompdf;
- //----------- provisoire -------------
-/*
-$patientName = "patientName";
-$birthdate = "birthDate";
-$phone = "phoneNumber";
-$sex = "sex";
-$street = "street";
 
-// Medical Tests & Examinations
-$carePractitionerName = "careP";
-$ppdPlantedOn = "ppdPlantedOn";
-$ppdReadOn = "ppdReadOn";
-$ppdResult = "ppdResult";
-$xRayDate = "chestXrayOn";
-
-//health care facility information
-$facilityName ="facilityName";
-$facilityPhone = "facilityPhone";
-$facilityAddress = "facilityAddress";
-
-//Healthcare Provider Information
-
-$providerName = "providerName";
-$signedDate = '2025-12-02';
-//---------------------------------------------------------
-
-*/
 
 //patient info
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -111,23 +96,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $providerName = $_POST["providerName"];
     $signedDate = (new DateTime())->format('m-d-Y');
 
-// Print the image to the pdf
+    // generation et stckage de la clé du QR
 
-    /*
-    $dataURL = $_POST['signature'];
-    $parts = explode(',', $dataURL);
-    $base64 = end($parts);
+    $randomKey = generateRandomKey(8);
 
-    // Decode the base64 string
-    $imageData = base64_decode($base64);
+    try {
+        $conn = getDbConnection();
+        // Générer un ID automatiquement (AUTO_INCREMENT)
+        $date = new DateTime('now');
+        $date= $date->format('Y-m-d');
+        $conn->query("INSERT INTO doc_verification (id_doc, owner, creation_date) VALUES ('$randomKey','$patientName', '$date')");
+        $certId = $conn->insert_id;
 
-    // Create temporary image file
-    $tmpFile = tempnam(sys_get_temp_dir(), 'sig') . '.png';
-    file_put_contents($tmpFile, $imageData);
-    $img = 'data:image/png;base64,' . base64_encode($imageData);
-    */
+    }catch (Exception $e){
+        throw $e;
 
-   // No More Need the Uploaded Image
+    }
+
+    // QRcode
+    $qrCode = new QrCode("http://foyetmedical.fagiciel.com/verification.php?id=".$randomKey);
+
+
+    $qrCode->setSize(150);
+    $qrCode->setMargin(10);
+
+
+    $qrImage = $qrCode->writeDataUri();
+
+    $QR = "<img src='" . $qrImage . "' alt='QR Code' style='position: absolute;top: 16cm;left: 14cm;width: 3cm;height: 3cm;'>";
+
+
+    // No More Need the Uploaded Image
     //$logoPath = __DIR__ . '/assets/signqture-foyetnobg.png'; // chemin absolu
     $matches = glob(__DIR__ . '/uploads/foyetsignature.*');
     $logoPath = isset($matches[0]) ? $matches[0] : null;
@@ -167,11 +166,11 @@ $template = file_get_contents('montemplate.html');
 // 3. Remplacer les étiquettes {{...}} par les vraies données
 $html = str_replace(
     ['{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
-'{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{tmpFile}}', '{{cachet}}'],
+'{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{QR}}','{{tmpFile}}', '{{cachet}}'],
     [($base64Logo) ,htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone), htmlspecialchars($sex),
         htmlspecialchars($carePractitionerName), htmlspecialchars($ppdPlantedOn), htmlspecialchars($ppdReadOn),
         htmlspecialchars($ppdResult), htmlspecialchars($xRayDate), htmlspecialchars($facilityName), htmlspecialchars($facilityPhone),
-        htmlspecialchars($facilityAddress), htmlspecialchars($providerName), htmlspecialchars($signedDate),
+        htmlspecialchars($facilityAddress), htmlspecialchars($providerName), htmlspecialchars($signedDate),($QR),
         htmlspecialchars($img),($cachet)],
     $template
 );

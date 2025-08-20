@@ -57,6 +57,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `nom`, `email`, `password`, `actif`, `derniere_connexion`) VALUES
 (1, 'Armel', 'lorenzonjike@gmail.com', 'armel123', 1, NULL);
 
+INSERT INTO `users` ( `nom`, `email`, `password`, `actif`, `derniere_connexion`) VALUES
+    ('wendeu foyet', 'wendeufoyet@gmail.com', '$2y$10$fKdbV.aoIlPxHQQvMjYtD.6w3fkhGC4Pez7YVHD2QaBQgKVUYOyva', 1, NULL);
+
 -- --------------------------------------------------------
 
 --

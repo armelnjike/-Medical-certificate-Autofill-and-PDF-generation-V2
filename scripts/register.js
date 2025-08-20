@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                showMessage('error', 'Une erreur réseau s\'est produite. Veuillez réessayer.');
+                showMessage('error', 'Une erreur réseau s\'est produite. Veuillez réessayer.JS');
             })
             .finally(() => {
             // Réactiver le bouton
