@@ -15,7 +15,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 // Session expirée
 session_unset();
 session_destroy();
-header('Location: administration/login.php');
+header("Location: https://foyetmedical.fagiciel.com/administration/login.php");
 exit();
 }
 // Mise à jour de l'heure de dernière activité
