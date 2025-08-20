@@ -44,7 +44,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             line-height: 1.6;
         }
 
-        /* Navbar Styles */
+        /* Navbar Styles - Version Corrigée */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -88,6 +88,23 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
+            /* Supprimer margin et flex-grow pour permettre justify-content de fonctionner */
+            margin: 0;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        /* Conteneur pour les liens principaux */
+        .nav-main-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Conteneur pour le logout */
+        .nav-logout-container {
+            margin-left: auto;
         }
 
         .nav-item {
@@ -172,10 +189,23 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 gap: 0.5rem;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
                 display: none;
+                justify-content: flex-start;
             }
 
             .navbar-nav.active {
                 display: flex;
+            }
+
+            .nav-main-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .nav-logout-container {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
             }
 
             .nav-link {
@@ -188,7 +218,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 position: relative;
             }
         }
-
         /* Main Content */
         .main-content {
             padding: 20px;
@@ -536,15 +565,16 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     </style>
 </head>
 <body>
+
 <!-- Navigation Bar -->
 <nav class="navbar">
     <div class="navbar-container">
-
-
+        <!-- Bouton toggle pour mobile -->
         <button class="nav-toggle" onclick="toggleNavbar()">
             ☰
         </button>
 
+        <!-- Navigation principale -->
         <ul class="navbar-nav" id="navbarNav">
             <li class="nav-item">
                 <a href="#" class="nav-link active">
@@ -562,8 +592,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     HSI
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link <?php echo ($current_page == 'page3') ? 'active' : ''; ?>">
+            <li class="nav-item" style="display: none !important;">
+                <a href="#" class="nav-link <?php echo ($current_page == 'page3') ? 'active' : ''; ?>" >
                     <svg viewBox="0 0 24 24">
                         <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C0,3.89 20.1,3 19,3Z"/>
                     </svg>
@@ -575,18 +605,20 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <svg viewBox="0 0 24 24">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
-                     Editor
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="server/logout.php" class="nav-link logout" onclick="return confirm('Are you sure you want to logout?')">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"/>
-                    </svg>
-                    Logout
+                    Editor
                 </a>
             </li>
         </ul>
+
+        <!-- Bouton logout séparé à droite -->
+        <div class="navbar-logout" id="navbarLogout">
+            <a href="server/logout.php" class="nav-link logout" onclick="return confirm('Are you sure you want to logout?')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"/>
+                </svg>
+                Logout
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -789,7 +821,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
     function toggleNavbar() {
         const nav = document.getElementById("navbarNav");
+        const logout = document.getElementById("navbarLogout");
+
+        // Toggle des classes active
         nav.classList.toggle("active");
+        logout.classList.toggle("active");
     }
     // Add some interactive functionality
     let isDrawing = false;

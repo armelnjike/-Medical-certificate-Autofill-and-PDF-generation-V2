@@ -62,6 +62,6 @@ try {
 
 } catch (Exception $e) {
     error_log("Registration error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Erreur système. Veuillez réessayer plus tard.']);
+    echo json_encode(['success' => false, 'message' => 'Erreur server. Si ça persiste , veillez contacter l\'administrateur : Armel.njike@yahoo.com.']);
 }
 ?>

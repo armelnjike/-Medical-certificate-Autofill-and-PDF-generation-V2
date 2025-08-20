@@ -6,6 +6,7 @@ $_SESSION = [];
 
 // Détruire la session côté serveur
 session_destroy();
+session_abort();
 
 // Supprimer le cookie de session côté navigateur (optionnel mais recommandé)
 if (ini_get("session.use_cookies")) {
@@ -17,5 +18,5 @@ if (ini_get("session.use_cookies")) {
 }
 
 // Rediriger vers la page de connexion ou accueil
-header("Location: ../administration/login.php");
+header("Location: https://foyetmedical.fagiciel.com/administration/login.php");
 exit;

@@ -44,7 +44,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             line-height: 1.6;
         }
 
-        /* Navbar Styles */
+        /* Navbar Styles - Version Corrigée */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -88,6 +88,23 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
+            /* Supprimer margin et flex-grow pour permettre justify-content de fonctionner */
+            margin: 0;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        /* Conteneur pour les liens principaux */
+        .nav-main-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Conteneur pour le logout */
+        .nav-logout-container {
+            margin-left: auto;
         }
 
         .nav-item {
@@ -132,11 +149,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
             color: white;
         }
-        /* Pousser le logout à droite */
-        .navbar-nav .logout-item {
-            margin-left: auto;
-            float: right;
-        }
 
         .nav-link.logout:hover {
             background: linear-gradient(135deg, #ff5252 0%, #e53e3e 100%);
@@ -177,10 +189,23 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 gap: 0.5rem;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
                 display: none;
+                justify-content: flex-start;
             }
 
             .navbar-nav.active {
                 display: flex;
+            }
+
+            .nav-main-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .nav-logout-container {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
             }
 
             .nav-link {
@@ -193,7 +218,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 position: relative;
             }
         }
-
         /* Main Content */
         .main-content {
             padding: 20px;
@@ -564,54 +588,68 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 </head>
 <body>
 <!-- Navigation Bar -->
+<!-- Navigation Bar - Structure Corrigée -->
 <nav class="navbar">
     <div class="navbar-container">
+        <a href="#" class="navbar-brand">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            HSI Medical
+        </a>
+
         <button class="nav-toggle" onclick="toggleNavbar()">
             ☰
         </button>
 
         <ul class="navbar-nav" id="navbarNav">
-            <li class="nav-item">
-                <a href="../index.php" class="nav-link <?php echo ($current_page == 'page1') ? 'active' : ''; ?>">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    Foyet-medical
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link active">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
-                    HSI
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link <?php echo ($current_page == 'page3') ? 'active' : ''; ?>">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C0,3.89 20.1,3 19,3Z"/>
-                    </svg>
-                    Registration Form 3
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    </svg>
-                    Editor
-                </a>
-            </li>
+            <!-- Liens principaux -->
+            <div class="nav-main-links">
+                <li class="nav-item">
+                    <a href="../index.php" class="nav-link <?php echo ($current_page == 'page1') ? 'active' : ''; ?>">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Foyet-medical
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        HSI
+                    </a>
+                </li>
+                <li class="nav-item" style="display: none !important;">
+                    <a href="#" class="nav-link <?php echo ($current_page == 'page3') ? 'active' : ''; ?>" >
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C0,3.89 20.1,3 19,3Z"/>
+                        </svg>
+                        Registration Form 3
+                    </a>
+                </li>
+                <li class="nav-item" style="display: none !important;">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        Editor
+                    </a>
+                </li>
+            </div>
 
-            <li class="nav-item logout-item">
-                <a href="../server/logout.php" class="nav-link logout" onclick="return confirm('Are you sure you want to logout?')">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"/>
-                    </svg>
-                    Logout
-                </a>
-            </li>
+            <!-- Bouton Logout à droite -->
+            <div class="nav-logout-container">
+                <li class="nav-item">
+                    <a href="../server/logout.php" class="nav-link logout" onclick="return confirm('Are you sure you want to logout?')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"/>
+                        </svg>
+                        Logout
+                    </a>
+                </li>
+            </div>
         </ul>
     </div>
 </nav>
@@ -635,12 +673,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <h1>HSI Registration</h1>
                 <p>ADULT FIRST AID | CPR AED</p>
             </div>
-            <!--
-            <div >
-                <div class="header-content">
-                    <a href="editeurd.php"><button class="changeTemplate-btn">Modify the Template</button> </a>
-                </div>
-            </div>   -->
+
         </div>
 
         <form id="patientForm" action="#" method="POST">
@@ -736,9 +769,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
                 </p>
 
-                <!--  Change the template button  -->
-
-                <!--<button type="button" class="changeTemplate-btn" id="cht">Print on Most  Recent Template</button>-->
                 <p style="color: rgba(255,255,255,0.8); margin-top: 15px; font-size: 0.9rem;">
                     All information will be securely processed and stored according to HIPAA regulations
                 </p>

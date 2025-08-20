@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Sécuriser les entrées
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$email = trim(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL));
 $password = $_POST['password'];
 
 if (empty($email) || empty($password)) {
