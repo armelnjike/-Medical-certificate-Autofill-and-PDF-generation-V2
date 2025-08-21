@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<table style="border-bottom: none; width:100%; margin:5px; border-collapse: collapse;">
+<table style="border-bottom: 0.5px solid; width:100%; margin:5px; border-collapse: collapse;">
     <tr>
         <!-- Colonne gauche -->
         <td style="border:none; width:40%; vertical-align: top; padding:5px;">
@@ -31,11 +31,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="font-size: 0.9em; padding:5px 0;">
-                        <label>{{checkbox1}} ADULT</label>
-                        <label>{{checkbox2}} ADULT/CHILD/INFANT</label> <br>
-                        <label>{{checkbox3}} ADULT/CHILD</label>
-                        <label>{{checkbox4}} ADULT/INFANT</label>
+                    <td style="font-size: 0.7em; padding:5px 0;">
+                        <table style="width:100%; border-collapse: collapse;">
+                            <tr>
+                                <td>{{checkbox1}} ADULT</td>
+                                <td>{{checkbox2}} ADULT/CHILD/INFANT</td>
+                                <td>{{checkbox3}} ADULT/CHILD</td>
+                                <td>{{checkbox4}} ADULT/INFANT</td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr>
@@ -48,11 +52,7 @@
                         <strong>ADULT FIRST AID | CPR AED</strong>
                     </td>
                 </tr>
-                <tr>
-                    <td style="text-align:center; padding:10px 0;">
-                        {{QR}}
-                    </td>
-                </tr>
+
             </table>
         </td>
 
@@ -103,32 +103,11 @@
                         <br><strong>Expiration date may not exceed two years from class completion.</strong>
                     </td>
                 </tr>
-                <tr>
-                    <td style="text-align:center; padding-top:5px;">{{cachet}}</td>
-                </tr>
             </table>
         </td>
     </tr>
 
     <!-- Ligne finale pour nom + signature -->
-    <tr>
-        <td colspan="2">
-            <table style="width:100%; border-collapse: collapse; border:none;">
-                <tr>
-                    <td style="padding:2px; text-align:left; width:50%; text-align:left; margin-left: 40px;margin-top: 0;margin-bottom: 0;">{{studentName}}</td>
-                    <td style="padding:2px; text-align:right; width:50%;text-align:center;margin-top: 0;margin-bottom: 5px;">{{instructorSignature}}</td>
-                </tr>
-                <tr>
-                    <td style="border-bottom:1px solid black; width:50%;"></td>
-                    <td style="border-bottom:1px solid black; width:50%;"></td>
-                </tr>
-                <tr>
-                    <td style="text-align:left; padding-top:2px;margin-left: 40px;">Student Name</td>
-                    <td style="text-align:right; padding-top:2px;text-align:center;">Instructor Signature</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
 </table>
 </body>
 </html>
