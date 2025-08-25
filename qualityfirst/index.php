@@ -606,23 +606,23 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <!-- Liens principaux -->
             <div class="nav-main-links">
                 <li class="nav-item">
-                    <a href="../index.php" class="nav-link">
+                    <a href="../index.php" class="nav-link <?php echo ($current_page == 'page1') ? 'active' : ''; ?>">
                         <svg viewBox="0 0 24 24">
                             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                         </svg>
-                        Foyet-Medical
+                        Foyet-medical
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">
+                    <a href="../hsi/index.php" class="nav-link">
                         <svg viewBox="0 0 24 24">
                             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                         </svg>
                         Hsi
                     </a>
                 </li>
-                <li class="nav-item" >
-                    <a href="../qualityfirst/index.php" class="nav-link " >
+                <li class="nav-item">
+                    <a href="#" class="nav-link active " >
                         <svg viewBox="0 0 24 24">
                             <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C0,3.89 20.1,3 19,3Z"/>
                         </svg>
@@ -677,85 +677,164 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         </div>
 
         <form id="patientForm" action="#" method="POST">
+
+
+            <!-- Student Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Student Informations
+                </div>
+                <div class="section-content">
+                    <div class="medical-tests">
+
+                        <div class="ppd-grid">
+                            <div class="form-group">
+                                <label for="studentName">student Name</label>
+                                <input type="text" id="studentName" name="studentName" placeholder="studentName">
+                            </div>
+                            <div class="form-group">
+                                <label for="className" class="required">class </label>
+                                <input type="text" id="className" name="className" required placeholder="Enter instructor's full name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="authorizingStudent" class="required">authorizing Studentr Name</label>
+                                <input type="text" id="authorizingStudent" name="authorizingStudent" required placeholder="authorizing Student Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="studentSignature" class="required">student Signing Name</label>
+                                <input type="text" id="studentSignature" name="studentSignature" required placeholder="authorizing Student Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="studentSignatureDate" class="required">authorizing Studentr Name</label>
+                                <input type="date" id="studentSignatureDate" name="studentSignatureDate" required placeholder="student Signature Date">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
             <!-- Patient Information Section -->
             <div class="form-section">
                 <div class="section-header">
                     <svg class="section-icon" viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
-                    Patient Information
+                    Required to begin program
                 </div>
-                <div class="section-content">
+                <div class="section-content" style = "margin: 5px; !important;">
+
                     <div class="form-grid">
-                        <div class="form-group checkbox">
-                            <label for="adult"><input id="adult" type="checkbox" name="adult"> Adult</label>
-                            <label for="adultCI"><input id="adultCI" type="checkbox" name="adultCI"> Adult/Child/Infant</label>
-                            <label for="adultC"><input id="adultC" type="checkbox" name="adultC"> Adult/Child</label>
-                            <label for="adultI"><input id="adultI" type="checkbox" name="adultI"> Adult/Infant</label>
+                        PPD or Chest X-ray
+
+
+                        <div class="form-group">
+                            <label for="tbTestDate">Date</label>
+                            <input type="date" id="tbTestDate" name="tbTestDate" placeholder="Date">
+
+                            <label for="tbResult" class="required">Result</label>
+                            <input type="text" id="tbResult" name="tbResult" required placeholder="tb Result">
+                        </div>
+                    </div>
+                </div>
+                <div class="section-content" style = "margin: 5px; !important;">
+                    <div class="form-grid">
+                        <div class="form-group checkbox" >
+                            <p>Student is <strong>FREE</strong> from TB or other communicable disease which might present a health hazard to patients or other personnel.<br>Yes / No with checkboxes</p>
+                            <label for="checkbox1">
+                                <input id="checkbox1" type="radio" name="checkbox1" value="yes" required> Yes
+                            </label>
+                            <label for="checkbox2">
+                                <input id="checkbox2" type="radio" name="checkbox1" value="no"> No
+                            </label>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label for="tbExplaination">If no please explain</label>
+                            <input type="text" id="tbExplaination" name="tbExplanation" placeholder="tbExplaination">
                         </div>
 
                     </div>
+                </div>
+
+
+
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group checkbox" >
+                            <p class="mb-2 small">The above named student is in satisfactory physical condition.<br>Yes / No with checkboxes</p> <br>
+                            <label for="checkbox3">
+                                <input id="checkbox3" type="radio" name="checkbox3" value="yes" required> Yes
+                            </label>
+                            <label for="checkbox4">
+                                <input id="checkbox4" type="radio" name="checkbox3" value="no" > No
+                            </label>
+                        </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="phExplaination">If no please explain</label>
+                                    <input style="width: 100%;" type="text" id="phExplaination" name="phExplanation" placeholder="phisic Explaination">
+                                </div>
+
+                    </div>
+
                 </div>
             </div>
 
             <!-- Practical care examinator Section -->
             <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Primary Care Provider
+                </div>
                 <div class="section-content">
                     <div class="medical-tests">
 
                         <div class="ppd-grid">
                             <div class="form-group">
-                                <label for="RegistryN">Registry No</label>
-                                <input type="text" id="RegistryN" name="RegistryN" placeholder="Registry No">
+                                <label for="PrimaryCareProvider">Primary Care Provider</label>
+                                <input type="text" id="PrimaryCareProvider" name="PrimaryCareProvider" placeholder="Primary Care Provider">
                             </div>
                             <div class="form-group">
-                                <label for="studentName" class="required">Student Name</label>
-                                <input type="text" id="studentName" name="studentName" required placeholder="Enter instructor's full name">
+                                <label for="formCompletedDate" class="required">form Completed Date</label>
+                                <input type="date" id="formCompletedDate" name="formCompletedDate" required placeholder="form Completed Date">
                             </div>
 
-                            <div class="form-group">
-                                <label for="instructorName" class="required">Instructor Name</label>
-                                <input type="text" id="instructorName" name="instructorName" required placeholder="Enter instructor's full name">
-                            </div>
                         </div>
 
                     </div>
                 </div>
             </div>
 
-            <!-- Medical Tests Section -->
-            <div class="form-section">
-
-                <div class="section-content">
-                    <div class="medical-tests">
-                        <div class="ppd-grid">
-                            <div class="form-group">
-                                <label for="CompletionDate">Completion Dqte</label>
-                                <input type="date" id="CompletionDate" name="CompletionDate">
-                            </div>
-                            <div class="form-group">
-                                <label for="ExpirationDate">Expiration Date</label>
-                                <input type="date" id="ExpirationDate" name="ExpirationDate">
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
 
             <!-- Facility Information Section -->
             <div class="form-section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Primary Care Provider
+                </div>
                 <div class="section-content">
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label for="TrainingCenterPhone" class="required">Training Center Phone Number</label>
-                            <input type="tel" id="TrainingCenterPhone" name="TrainingCenterPhone" required placeholder="+1 (555) 987-6543">
+                            <label for="PrimaryCarePSignDate" class="required">Primary CareP Signed Date</label>
+                            <input type="date" id="PrimaryCarePSignDate" name="PrimaryCarePSignDate" required placeholder="Primary CareP Signed Date">
                         </div>
                         <div class="form-group">
-                            <label for="TrainingCenterId" class="required">Training Center Id</label>
-                            <input type="text" id="TrainingCenterId" name="TrainingCenterId" required placeholder="Training Center Id">
+                            <label for="PrimaryCarePAddress" class="required">Training Center Id</label>
+                            <input type="text" id="PrimaryCarePAddress" name="PrimaryCarePAddress" required placeholder="Primary CareP Address">
                         </div>
                     </div>
                 </div>

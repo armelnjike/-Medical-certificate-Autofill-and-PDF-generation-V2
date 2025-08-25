@@ -1,0 +1,890 @@
+<!-- Page: document_editor.html -->
+<?php
+
+session_start();
+
+$inactivityLimit = 30*60*1000;
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    // Pas connecté => rediriger vers la page de login
+    header('Location: administration/login.php');
+    exit();
+}
+
+// Vérifie la durée d'inactivité
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactivityLimit) {
+    // Session expirée
+    session_unset();
+    session_destroy();
+    header('Location: administration/login.php');
+    exit();
+}
+// Mise à jour de l'heure de dernière activité
+$_SESSION['last_activity'] = time();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Document Designer</title>
+    <script src="https://cdn.tiny.cloud/1/o1e5ain2d040n9yw6y4pd5ckfg90gxgytq7s4h9j1objsy8y/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #editor {
+            min-height: 400px;
+        }
+        .button-group {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .button-group button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: 0.3s ease;
+        }
+        .button-group button:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .savet{
+            box-shadow: 0 5px 20px rgba(255,200,200,0.4); !important;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255,255,255,0.05) 10px,
+                    rgba(255,255,255,0.05) 20px
+            );
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .form-section {
+            padding: 0;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe, #4facfe);
+        }
+
+        .section-content {
+            padding: 40px;
+            background: #fafbfc;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .required::after {
+            content: ' *';
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .upload-container {
+            position: relative;
+            background: #f7fafc;
+            border: 2px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .upload-container:hover {
+            border-color: #4facfe;
+            background: #edf2f7;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.1);
+        }
+
+        .upload-container.dragover {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-icon {
+            width: 60px;
+            height: 60px;
+            fill: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .upload-container:hover .upload-icon {
+            fill: #4facfe;
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .image-preview {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .image-preview.active {
+            display: block;
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .image-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .image-size {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fed7d7;
+            color: #c53030;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .remove-btn:hover {
+            background: #feb2b2;
+            transform: scale(1.1);
+        }
+
+        .submit-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .section-content {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .upload-container {
+                min-height: 250px;
+                padding: 20px;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .upload-cont{
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+            margin-top: 40px;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: -2s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -4s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Design Your Medical Document</h2>
+    <form id="documentForm">
+        <textarea name="documentContent" id="editor" placeholder="Type your report or certificate here..."></textarea>
+
+        <input type="hidden" name="patientDataJson" id="patientDataJson" value=""> <!-- Injected dynamically -->
+
+        <div class="button-group">
+            <a href="index.php"><button type="button">Return Home</button></a>
+            <button type="button" onclick="previewDocument()">Preview HTML</button>
+            <button type="button" class="savet" onclick="saveTemplate()">Save new Template</button>
+        </div>
+    </form>
+
+
+    <!-- -------------------NEW DIV-----------------------------  -->
+    <div class="upload-cont">
+        <div class="header">
+            <div class="header-content">
+                <h1>Uploadez vos Images</h1>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-header">
+
+                Modifier le Logo et le Cachet
+            </div>
+            <?php
+            $sign = glob($_SERVER['DOCUMENT_ROOT'] . '/uploads/foyetlogo.*');
+            $cachet = glob($_SERVER['DOCUMENT_ROOT'] . '/uploads/foyetcachet.*');
+            /*
+            $files = scandir($_SERVER['DOCUMENT_ROOT'] . '/uploads');
+            echo '<pre>';
+            print_r($files);
+            echo '</pre>';
+            */
+            $signUrl = count($sign) > 0 ? '/uploads/' . basename($sign[0]) : '';
+            $cachetUrl = count($cachet) > 0 ? '/uploads/' . basename($cachet[0]) : '';
+            //var_dump($signUrl);
+            ?>
+            <script>console.log(<?= $signUrl ?>);</script>
+            <div class="section-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="image1" class="required">Logo Ici</label>
+                        <div class="upload-container" onclick="document.getElementById('image1').click()">
+                            <input type="file" id="image1" class="upload-input" accept="image/*" onchange="handleFileSelect(event, 'preview1')">
+
+
+                            <div class="upload-placeholder" id="placeholder1" style="<?= $signUrl ? 'display:none' : '' ?>">
+                                <svg class="upload-icon" viewBox="0 0 24 24">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                                <div class="upload-text">Cliquez pour sélectionner une image de Logo</div>
+                                <div class="upload-subtext">ou glissez-déposez votre Logo ici</div>
+                                <div class="upload-subtext">Formats supportés: JPG, PNG, GIF (max 5MB)</div>
+                            </div>
+
+                            <div class="image-preview <?= $signUrl ? 'active' : '' ?>" id="preview1" style="<?= $signUrl ? '' : 'display:none' ?>">
+                                <button class="remove-btn" onclick="removeImage(event, 'image1', 'preview1')">&times;</button>
+                                <img class="preview-img" id="img1" src="<?= $signUrl ?: '#' ?>" alt="Prévisualisation" style="width: 100%; height: 100%; object-fit: contain;">
+                                <div class="image-info">
+                                    <div class="image-name" id="name1"><?= $signUrl ? basename($signUrl) : '' ?></div>
+                                    <div class="image-size" id="size1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image2" class="required">Cachet du Service Ici</label>
+                        <div class="upload-container" onclick="document.getElementById('image2').click()">
+                            <input type="file" id="image2" class="upload-input" accept="image/*" onchange="handleFileSelect(event, 'preview2')">
+
+                            <div class="upload-placeholder" id="placeholder2" style="<?= $cachetUrl ? 'display:none' : '' ?>">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                                <div class="upload-text">Cliquez pour sélectionner une image de votre cachet</div>
+                                <div class="upload-subtext">ou glissez-déposez votre cachet ici</div>
+                                <div class="upload-subtext">Formats supportés: JPG, PNG, GIF (max 5MB)</div>
+                            </div>
+
+                            <div class="image-preview <?= $cachetUrl ? 'active' : '' ?>" id="preview2" style="<?= $cachetUrl ? '' : 'display:none' ?>">
+                                <button class="remove-btn" onclick="removeImage(event, 'image2', 'preview2')">&times;</button>
+                                <img class="preview-img" id="img2" src="<?= $cachetUrl ?: '#' ?>" alt="Prévisualisation" style="width: 100%; height: 100%; object-fit: contain;">
+
+                                <div class="image-info">
+                                    <div class="image-name" id="name2"><?= $cachetUrl ? basename($cachetUrl) : '' ?></div>
+                                    <div class="image-size" id="size2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <button type="submit" class="submit-btn" onclick="submitForm()">
+                Valider les documents
+            </button>
+        </div>
+    </div>
+
+    <!--  --------------------  NEW DIV  ------------------------  -->
+
+</div>
+
+<script>
+
+    // ----------------------------  Gestion Uploads ----------------------------------
+
+    // Gestion du drag & drop
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadContainers = document.querySelectorAll('.upload-container');
+
+        uploadContainers.forEach(container => {
+            container.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            container.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+
+            container.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const input = this.querySelector('.upload-input');
+                    input.files = files;
+
+                    const previewId = input.id === 'image1' ? 'preview1' : 'preview2';
+                    handleFileSelect({ target: input }, previewId);
+                }
+            });
+        });
+    });
+
+    function handleFileSelect(event, previewId) {
+        const file = event.target.files[0];
+        if (!file) return;
+        console.log("Prévisualisation déclenchée pour : " + previewId);
+        // Validation du fichier
+        if (!file.type.startsWith('image/')) {
+            alert('Veuillez sélectionner un fichier image valide.');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+            alert('Le fichier est trop volumineux. Taille maximale: 5MB.');
+            return;
+        }
+
+        const reader = new FileReader();
+        const imageId = previewId.replace('preview', 'img');
+        const nameId = previewId.replace('preview', 'name');
+        const sizeId = previewId.replace('preview', 'size');
+        const placeholderId = previewId.replace('preview', 'placeholder');
+
+
+        console.log("Fichier lu pour", imageId);
+        reader.onload = function(e) {
+            console.log('reader loaded for', previewId);
+
+            // Masquer le placeholder et afficher la prévisualisation
+            const preview = document.getElementById(previewId);
+            const placeholder = document.getElementById(placeholderId);
+            preview.style.display = 'block'; // Forçage
+            preview.classList.add('active');
+            placeholder.style.display = 'none';
+
+            // Mettre à jour l'image et les informations
+            const img = document.getElementById(imageId);
+            img.src = e.target.result;
+
+            const name = document.getElementById(nameId);
+            const size = document.getElementById(sizeId);
+            name.textContent = file.name;
+            size.textContent = formatFileSize(file.size);
+        };
+
+
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage(event, inputId, previewId) {
+        event.stopPropagation();
+
+        // Réinitialiser l'input
+        document.getElementById(inputId).value = '';
+
+        // Masquer la prévisualisation et afficher le placeholder
+        document.getElementById(previewId).classList.remove('active');
+        const placeholderId = previewId.replace('preview', 'placeholder');
+        document.getElementById(placeholderId).style.display = 'flex';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    /*
+    function submitForm() {
+        const image1 = document.getElementById('image1').files[0];
+        const image2 = document.getElementById('image2').files[0];
+
+        if (!image1 || !image2) {
+            alert('Veuillez sélectionner les deux images requises.');
+            return;
+        }
+
+        // Simulation de l'envoi
+        alert('Documents téléchargés avec succès!\n\n' +
+            'Photo d\'identité: ' + image1.name + ' (' + formatFileSize(image1.size) + ')\n' +
+            'Certificat médical: ' + image2.name + ' (' + formatFileSize(image2.size) + ')');
+    }
+
+     */
+    function submitForm() {
+        const image1 = document.getElementById('image1').files[0];
+        const image2 = document.getElementById('image2').files[0];
+        /*
+        if (!image1 || !image2) {
+            alert('Veuillez sélectionner les deux images requises.');
+            return;
+        }
+
+         */
+
+        const formData = new FormData();
+        formData.append('photo_identite', image1);
+        formData.append('certificat_medical', image2);
+
+        // Optionally add other fields
+        // formData.append('nom', document.getElementById('nom').value);
+
+        fetch('imageupload.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors du téléchargement');
+                }
+                return response.json(); // Or .text() depending on server response
+            })
+            .then(data => {
+                alert('Documents téléchargés avec succès !');
+                console.log('Réponse serveur:', data);
+            })
+            .catch(error => {
+                alert('Échec du téléchargement: ' + error.message);
+                console.error('Erreur AJAX:', error);
+            });
+    }
+
+
+    //  --------------------  EDITEUR ------------------------------------------
+    let editorInstance;
+
+// Configuration TinyMCE - Compatible avec CKEditor API
+tinymce.init({
+    selector: '#editor',
+    height: 400,
+    language: 'fr_FR',
+    plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount', 'print'
+    ],
+    toolbar: 'undo redo | blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | print preview | help',
+    menubar: 'file edit view insert format tools table help',
+    branding: false,
+    setup: function (editor) {
+        editor.on('init', function () {
+            console.log('TinyMCE initialisé avec succès');
+            editorInstance = editor;
+            
+            // Ajouter les méthodes compatibles CKEditor
+            editorInstance.getData = function() {
+                return editor.getContent();
+            };
+            
+            editorInstance.setData = function(data) {
+                editor.setContent(data);
+            };
+            
+            // Charger le template par défaut (comme CKEditor)
+            fetch('mestemplates/montemplate.html')
+                .then(response => {
+                    if (!response.ok) throw new Error("Fichier template introuvable.");
+                    return response.text();
+                })
+                .then(data => {
+                    editorInstance.setData(data);
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement du template :', error);
+                });
+        });
+    }
+});
+    //Sauvegarder le template
+    function saveTemplate(){
+        // Creer nouveau template ------------------------
+
+        const htmlContent = editorInstance.getData(); // récupère le HTML
+        console.log(htmlContent);
+
+
+        fetch('save_template.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                templateHtml: htmlContent
+            })
+        })
+            .then(response => response.text())
+            .then(result => alert(result))
+            .catch(err => console.error('Erreur sauvegarde template:', err));
+    }
+
+    // Collect patient data from localStorage or session (example)
+    function getPatientFormData() {
+        // Replace this with dynamic collection if form and editor are on same page
+        //retrieve session data
+        let patientData = {};
+        try {
+            patientData = JSON.parse(localStorage.getItem('formData')) || {};
+        } catch {
+            console.log("And error occured while retrived formData");
+        }
+        return patientData;
+    }
+
+    // Preview raw HTML
+    function previewDocument() {
+        const html = editorInstance.getData();
+        const previewWindow = window.open('', '_blank');
+        previewWindow.document.write(`
+            <html>
+                <head><title>Preview</title></head>
+                <body style="font-family:Segoe UI;padding:40px;">${html}</body>
+            </html>
+        `);
+        previewWindow.document.close();
+    }
+
+
+    // Submit to backend
+    document.getElementById('documentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        window.location.href="index.html";
+        /*
+        const content = editorInstance.getData();
+        const patientData = getPatientFormData();
+        const payload = new FormData();
+        payload.append('documentHtml', content);
+        payload.append('patientDataJson', JSON.stringify(patientData));
+
+        console.log("Document content:", content);
+        console.log("Patient data:", patientData);
+        // Fetch all data to generarpdf php
+        fetch('generarpdf.php', {
+            method: 'POST',
+            body: payload
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("PDF generation failed");
+                return response.blob();
+            })
+            .then(blob => {
+                // Open PDF in a new tab
+                const blobUrl = URL.createObjectURL(blob);
+                window.open(blobUrl, '_blank');
+            })
+            .catch(error => {
+                console.error('Error submitting document:', error);
+                alert("Une erreur est survenue lors de la génération du PDF.");
+            });*/
+    });
+
+
+
+    // Preview local images
+    window.addEventListener('load', function () {
+        const img1 = document.getElementById('img1');
+        const name1 = document.getElementById('name1');
+        const size1 = document.getElementById('size1');
+
+        if (img1 && img1.src && !img1.src.includes('#')) {
+            fetch(img1.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    size1.textContent = formatFileSize(blob.size);
+                    name1.textContent = img1.src.split('/').pop();
+                });
+        }
+
+        const img2 = document.getElementById('img2');
+        const name2 = document.getElementById('name2');
+        const size2 = document.getElementById('size2');
+
+        if (img2 && img2.src && !img2.src.includes('#')) {
+            fetch(img2.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    size2.textContent = formatFileSize(blob.size);
+                    name2.textContent = img2.src.split('/').pop();
+                });
+        }
+    });
+    (function () {
+        let timeout;
+
+        function resetTimer() {
+            clearTimeout(timeout);
+            // Redémarre le compte à rebours de 2 min
+            timeout = setTimeout(logout, 10 * 60 * 1000); // 120000 ms = 2 minutes
+        }
+
+        function logout() {
+            window.location.href = "administration/login.php";
+        }
+
+        // Écoute tous les types d'activité
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetTimer);
+        });
+
+        // Initialiser au chargement
+        resetTimer();
+    })();
+
+</script>
+</body>
+</html>
+
