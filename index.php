@@ -710,7 +710,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         </h3>
                         <div class="ppd-grid">
                             <div class="form-group">
-                                <label for="ppdResult">Result (mm)</label>
+                                <label for="ppdResult"></label>
                                 <input type="text" id="ppdResult" name="careP" placeholder="name of the care examinator">
                             </div>
                         </div>
@@ -744,8 +744,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                                 <input type="date" id="ppdReadOn" name="ppdReadOn">
                             </div>
                             <div class="form-group">
-                                <label for="ppdResult2">Result (mm)</label>
-                                <input type="text" id="ppdResult2" name="ppdResult" placeholder="Enter measurement in mm">
+                                Result (mm)
+                                <label for="checkbox1">
+                                    Click the checkbox if positive
+                                    <input id="Result" type="checkbox" name="Result" value="yes">
+                                </label>
                             </div>
                         </div>
                     </div>

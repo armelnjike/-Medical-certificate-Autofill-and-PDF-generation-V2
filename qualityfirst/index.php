@@ -833,7 +833,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                             <input type="date" id="PrimaryCarePSignDate" name="PrimaryCarePSignDate" required placeholder="Primary CareP Signed Date">
                         </div>
                         <div class="form-group">
-                            <label for="PrimaryCarePAddress" class="required">Training Center Id</label>
+                            <label for="PrimaryCarePAddress" class="required">Adress</label>
                             <input type="text" id="PrimaryCarePAddress" name="PrimaryCarePAddress" required placeholder="Primary CareP Address">
                         </div>
                     </div>
