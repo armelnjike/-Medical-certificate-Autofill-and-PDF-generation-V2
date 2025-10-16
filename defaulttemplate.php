@@ -82,8 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $ppdPlantedOn = formatPostedDate("ppdPlantedOn");
     $ppdReadOn    = formatPostedDate("ppdReadOn");
-    $ppdResult    = formatPostedDate("ppdResult");
+    $ppdResult    = isset($_POST["Result"])? "positive" : "negative";
     $xRayDate     = formatPostedDate("chestXrayOn");
+
+
 
 
 //health care facility information
