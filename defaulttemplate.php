@@ -85,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ppdResult    = isset($_POST["Result"])? "positive" : "negative";
     $xRayDate     = formatPostedDate("chestXrayOn");
 
+    $isResult = isset($_POST["Result"])? "__" : "(X)";
+
 
 
 
@@ -167,9 +169,9 @@ $template = file_get_contents('montemplate.html');
 
 // 3. Remplacer les étiquettes {{...}} par les vraies données
 $html = str_replace(
-    ['{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
+    ['{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}','{{isResult}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
 '{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{QR}}','{{tmpFile}}', '{{cachet}}'],
-    [($base64Logo) ,htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone), htmlspecialchars($sex),
+    [($base64Logo) ,htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone),htmlspecialchars($isResult), htmlspecialchars($sex),
         htmlspecialchars($carePractitionerName), htmlspecialchars($ppdPlantedOn), htmlspecialchars($ppdReadOn),
         htmlspecialchars($ppdResult), htmlspecialchars($xRayDate), htmlspecialchars($facilityName), htmlspecialchars($facilityPhone),
         htmlspecialchars($facilityAddress), htmlspecialchars($providerName), htmlspecialchars($signedDate),($QR),

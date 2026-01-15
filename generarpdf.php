@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ppdResult    = formatPostedDate("ppdResult");
     $xRayDate     = formatPostedDate("chestXrayOn");
 
+    $isResult = isset($_POST["Result"])? "__" : "(X)";
 
     //health care facility information
     $facilityName = $_POST["facilityName"];
@@ -110,16 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $type = pathinfo($cachetPath, PATHINFO_EXTENSION);
         $data = file_get_contents($cachetPath);
         $base64Cachet = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        $cachet = '<img src="' . $base64Cachet . '" width="200" style="margin-left: 300px;">';
+        $cachet = '<img src="' . $base64Cachet . '" width="160" style="margin-left: 300px;">';
     } else {
         $cachet = '';
     }
 
     // 3. Remplacer les étiquettes {{...}} par les vraies données
     $html = str_replace(
-        [ '{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
+        [ '{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}', '{{isResult}}' ,'{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
             '{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{tmpFile}}', '{{cachet}}' ],
-        [($logo),htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone), htmlspecialchars($sex),
+        [($logo),htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone), htmlspecialchars($isResult) , htmlspecialchars($sex),
             htmlspecialchars($carePractitionerName), htmlspecialchars($ppdPlantedOn), htmlspecialchars($ppdReadOn),
             htmlspecialchars($ppdResult), htmlspecialchars($xRayDate), htmlspecialchars($facilityName), htmlspecialchars($facilityPhone),
             htmlspecialchars($facilityAddress), htmlspecialchars($providerName), htmlspecialchars($signedDate),
