@@ -70,7 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Healthcare Provider Information
     $providerName = $_POST["providerName"];
-    $signedDate = (new DateTime())->format('m-d-Y');
+    $signedDate = isset($_POST["newdate"])? formatPostedDate("newdate") : (new DateTime())->format('m-d-Y');
+
 
     //--------------------  signature ---------------------
     $matches = glob(__DIR__ . '/uploads/foyetsignature.*');
