@@ -60,6 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ppdResult    = formatPostedDate("ppdResult");
     $xRayDate     = formatPostedDate("chestXrayOn");
 
+    // ----------------------------------
+    //  xRay  a t il passé le xray ?
+    //  xRayNormal / xRayabnormal
+    // ppdResultNegative
+    // ----------------------------------
+
     $isResult = isset($_POST["Result"])? "__" : "(X)";
 
     //health care facility information

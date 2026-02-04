@@ -87,6 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $isResult = isset($_POST["Result"])? "__" : "(X)";
 
+    // ----------------------------------
+    //  xRay  a t il passé le xray ?
+    //  xRayReadOn ___
+    //  xRayNormal / xRayabnormal     xRayResult
+    // ppdResultNegative
+
+    // ----------------------------------
+
 
 
 

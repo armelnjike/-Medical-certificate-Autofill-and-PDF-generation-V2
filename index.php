@@ -751,16 +751,44 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                                 </label>
                             </div>
                         </div>
+                        <!--  xray  -->
+
+                        <br><br>
+                        <h3>
+                            <svg class="test-icon" viewBox="0 0 24 24">
+                                <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                            </svg>
+                            Chest X-Ray
+                        </h3>
+
+                        check the box if the xRay
+                        <input type="checkbox" id="xRay" name="xRay"  style="display: inline ; width: 50%;">
+                        <br>
+
+                        <div class="ppd-grid" id="xRaySection">
+                            <div class="form-group">
+                                <label for="xRayReadOn">Planted On</label>
+                                <input type="date" id="xRayReadOn" name="xRayReadOn">
+                            </div>
+                            <div class="form-group">
+                                <label for="chestXrayOn">Read On</label>
+                                <input type="date" id="chestXrayOn" name="chestXrayOn">
+                            </div>
+                            <div class="form-group">
+                                Result (mm)
+                                <label for="xRayResult">
+                                    Click the checkbox if positive
+                                    <input id="xRayResult" type="checkbox" name="xRayResult" value="yes">
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="chestXrayOn">Chest X-ray Date</label>
-                            <input type="date" id="chestXrayOn" name="chestXrayOn">
-                        </div>
-                    </div>
+
                 </div>
             </div>
+
 
             <!-- Facility Information Section -->
             <div class="form-section">
@@ -841,6 +869,9 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
     let checkbox = document.getElementById('backdate');
     let messageDiv = document.getElementById('newdate');
+    let xRayRadio = document.getElementById('xRay');
+    let xRaySection = document.getElementById('xRaySection');
+    xRaySection.style.display = "none";
 
     checkbox.addEventListener('change', function() {
 
@@ -853,6 +884,15 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             messageDiv.style.display = "none";
         }
     });
+
+    xRayRadio.addEventListener('change', function (){
+        if (xRayRadio.checked){
+            xRaySection.style.display = "inline";
+
+        }else {
+            xRaySection.style.display = "none";
+        }
+    } );
 
 
     function toggleNavbar() {
