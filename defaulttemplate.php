@@ -84,17 +84,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ppdReadOn    = formatPostedDate("ppdReadOn");
     $ppdResult    = isset($_POST["Result"])? "positive" : "negative";
     $xRayDate     = formatPostedDate("chestXrayOn");
+    $ppdResultNegative = isset($_POST["Result"])? "( )" : "(X)";
+    $ppdResultPositive = isset($_POST["Result"])? "(X)" : "( )";
 
-    $isResult = isset($_POST["Result"])? "__" : "(X)";
+    //$isResult = isset($_POST["Result"])? "__" : "(X)";
 
     // ----------------------------------
-    //  xRay  a t il passé le xray ?
-    //  xRayReadOn ___
-    //  xRayNormal / xRayabnormal     xRayResult
+    // xRay  a t il passé le xray ?
+    $xRayReadOn = "";
+    $xRayNormal = $xRayabnormal  = "";
     // ppdResultNegative
 
     // ----------------------------------
+    $xRay = "( )";
+if(isset($_POST["xRay"])){
+    $xRay = "(X)";
+    $xRayReadOn = formatPostedDate("xRayReadOn");
+    $isResult = (isset($_POST["xRayResult"]) or isset($_POST["Result"]) )? "__" : "(X)";
+    $xRayResult = isset($_POST["xRayResult"])?"()" : "(X)";
+    $xRayNormal = isset($_POST["xRayResult"])?"()" : "(X)";
+    $xRayabnormal = isset($_POST["xRayResult"])?"(X)" : "()";
 
+}
 
 
 
@@ -177,13 +188,13 @@ $template = file_get_contents('montemplate.html');
 
 // 3. Remplacer les étiquettes {{...}} par les vraies données
 $html = str_replace(
-    ['{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}','{{isResult}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResult}}',
-'{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{QR}}','{{tmpFile}}', '{{cachet}}'],
+    ['{{logo}}' ,'{{patientName}}', '{{birthdate}}', '{{phone}}','{{isResult}}', '{{sex}}','{{carePractitionerName}}','{{ppdPlantedOn}}','{{ppdReadOn}}','{{ppdResultPositive}}','{{ppdResultNegative}}',
+'{{xRayDate}}','{{facilityName}}', '{{facilityPhone}}','{{facilityAddress}}','{{providerName}}','{{signedDate}}','{{QR}}','{{tmpFile}}', '{{cachet}}','{{xRay}}','{{xRayDate}}','{{xRayNormal}}','{{xRayabnormal}}'],
     [($base64Logo) ,htmlspecialchars($patientName), htmlspecialchars($birthdate), htmlspecialchars($phone),htmlspecialchars($isResult), htmlspecialchars($sex),
         htmlspecialchars($carePractitionerName), htmlspecialchars($ppdPlantedOn), htmlspecialchars($ppdReadOn),
-        htmlspecialchars($ppdResult), htmlspecialchars($xRayDate), htmlspecialchars($facilityName), htmlspecialchars($facilityPhone),
+        htmlspecialchars($ppdResultPositive), htmlspecialchars($ppdResultNegative), htmlspecialchars($xRayReadOn), htmlspecialchars($facilityName), htmlspecialchars($facilityPhone),
         htmlspecialchars($facilityAddress), htmlspecialchars($providerName), htmlspecialchars($signedDate),($QR),
-        htmlspecialchars($img),($cachet)],
+        htmlspecialchars($img),($cachet), htmlspecialchars($xRay), htmlspecialchars($xRayReadOn), htmlspecialchars($xRayNormal), htmlspecialchars($xRayabnormal)],
     $template
 );
 

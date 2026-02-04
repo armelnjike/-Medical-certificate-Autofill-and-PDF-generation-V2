@@ -771,14 +771,10 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                                 <input type="date" id="xRayReadOn" name="xRayReadOn">
                             </div>
                             <div class="form-group">
-                                <label for="chestXrayOn">Read On</label>
-                                <input type="date" id="chestXrayOn" name="chestXrayOn">
-                            </div>
-                            <div class="form-group">
                                 Result (mm)
                                 <label for="xRayResult">
                                     Click the checkbox if positive
-                                    <input id="xRayResult" type="checkbox" name="xRayResult" value="yes">
+                                    <input id="xRayResult" type="checkbox" name="xRayResult" value="yes" style="display: inline ; width: 20%;">
                                 </label>
                             </div>
                         </div>
