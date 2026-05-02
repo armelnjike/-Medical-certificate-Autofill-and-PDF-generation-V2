@@ -9,7 +9,7 @@ ini_set('display_errors', '1');
 // Configuration array
 $config = [
     'db' => [
-        'host' => 'localhost',
+        'host' => 'localhost:3307',
         'name' => 'login_system',
         'user' => 'root',
         'pass' => 'armel123'
